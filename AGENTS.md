@@ -27,6 +27,11 @@ Extensive documentation for the system, policies, research and third-party integ
 - Frontend configuration and runtime env: `frontend/nuxt.config.ts`, `frontend/README.md`
 - Contribution conventions: `CONTRIBUTING.md` (PEP 8, Conventional Commits)
 - Database schema reference: `database.sql` (DDL dump used as a navigational reference; keep it updated when schema changes land).
+- Architectural Decision Records: `docs/decisions`
+
+Additionally, a long-term project plan is available under `docs/plan.md`, and it is subject to change. Refer to this
+file when you need broader context on the project, goals and parts as well as when reviewing your final code to ensure
+it is aligned with the project's and user request's goals.
 
 ## General change guidelines
 
@@ -41,6 +46,9 @@ Extensive documentation for the system, policies, research and third-party integ
   - Don’t paste `.env` contents into chat output.
   - Use `.env.template` as the reference for required variables.
 - If documentation is impacted, update the relevant `docs/*.md` or module README.
+- If making or instructed for a major architectural decision as per `docs/decisions/guide.md`, be sure to create a new
+ADR file under `/docs/decisions/<subdirs...>/<decision>.md` (e.g. /docs/decisions/backend/agents/0003-use-ollama.md).
+Don't read into the ADR guidance unless you are certain you are making significant architectural changes.
 
 ## Architecture expectations
 

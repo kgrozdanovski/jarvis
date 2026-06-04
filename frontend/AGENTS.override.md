@@ -9,6 +9,8 @@ This agent environment is sandboxed; do **not** run frontend commands to “chec
 
 ## Project shape (Nuxt 3)
 
+- Template: `frontend/design-template` must only be used as a reference design/layout for implementation, and is not
+part of the project itself. It must also not be altered in any way.
 - Config: `frontend/nuxt.config.ts` (modules, SSR, route rules, runtimeConfig, headers/caching).
 - Pages and routing: `frontend/pages/`
 - Components: `frontend/components/`
