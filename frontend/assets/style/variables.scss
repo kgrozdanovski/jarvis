@@ -1,0 +1,42 @@
+@use "sass:color";
+@use "sass:math";
+
+//
+///* 1) Define your palette once */
+//$jarvisred: (
+//  50:  #F7DDDB,
+//  100: #F2C4C0,
+//  200: #EAA39C,
+//  300: #E48981,
+//  400: #DF7066,
+//  500: #D9574B, // given
+//  600: #C04D42,
+//  700: #A6423A,
+//  800: #8C3831,
+//  900: #732E28, // given
+//  950: #642822
+//);
+//
+///* 2) Utilities (Tailwind-like) */
+//@each $shade, $hex in $jarvisred {
+//  /* Solid (no opacity suffix) */
+//  .bg-jarvisred-#{$shade}     { background-color: #{$hex}; }
+//  .text-jarvisred-#{$shade}   { color: #{$hex}; }
+//  .border-jarvisred-#{$shade} { border-color: #{$hex}; }
+//
+//  /* Opacity variants 1..100 (class names use escaped slash) */
+//  @for $o from 1 through 100 {
+//    $a: math.div($o, 100); // replaces $o / 100
+//
+//    /* Use color.change to set alpha (no deprecated channel funcs needed) */
+//    .bg-jarvisred-#{$shade}\/#{$o} {
+//      background-color: color.change($hex, $alpha: $a);
+//    }
+//    .text-jarvisred-#{$shade}\/#{$o} {
+//      color: color.change($hex, $alpha: $a);
+//    }
+//    .border-jarvisred-#{$shade}\/#{$o} {
+//      border-color: color.change($hex, $alpha: $a);
+//    }
+//  }
+//}

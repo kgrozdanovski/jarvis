@@ -1,0 +1,225 @@
+/* ============================================================
+   FUTURISM 26 — Core Tokens: Color + Type
+   D-DIN (SIL OFL v1.1, © 2017 Datto Inc. / Monotype)
+   ------------------------------------------------------------
+   Load this file, then set data-theme="light" (default) or
+   data-theme="dark" on <html> or any container.
+   ============================================================ */
+
+/* ---------- FONTS ---------- */
+@font-face{
+  font-family:"D-DIN";
+  src:url("fonts/D-DIN.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:"D-DIN";
+  src:url("fonts/D-DIN-Bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:"D-DIN";
+  src:url("fonts/D-DIN-Italic.woff2") format("woff2");
+  font-weight:400; font-style:italic; font-display:swap;
+}
+/* Expanded — display / headlines (architectural, wide) */
+@font-face{
+  font-family:"D-DIN Exp";
+  src:url("fonts/D-DINExp.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:"D-DIN Exp";
+  src:url("fonts/D-DINExp-Bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap;
+}
+/* Condensed — data, labels, eyebrows */
+@font-face{
+  font-family:"D-DIN Condensed";
+  src:url("fonts/D-DINCondensed.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:"D-DIN Condensed";
+  src:url("fonts/D-DINCondensed-Bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap;
+}
+
+/* ============================================================
+   PRIMITIVES
+   ============================================================ */
+:root{
+  /* --- Type families --- */
+  --font-display:"D-DIN Exp","D-DIN",system-ui,sans-serif;   /* wide, architectural */
+  --font-sans:"D-DIN",system-ui,sans-serif;                  /* body + UI */
+  --font-data:"D-DIN Condensed","D-DIN",system-ui,sans-serif;/* labels, metadata */
+
+  /* --- Accents (constant across themes) --- */
+  --blue-400:#6E8CFF;
+  --blue-500:#3B6CFF;   /* primary electric blue */
+  --blue-600:#2A53E6;
+  --violet-400:#B27DFF;
+  --violet-500:#9B5CFF;  /* primary neon violet */
+  --violet-600:#7E3FE6;
+  --accent-gradient:linear-gradient(118deg,var(--blue-500) 0%,var(--violet-500) 100%);
+  --accent-gradient-soft:linear-gradient(118deg,rgba(59,108,255,.16),rgba(155,92,255,.16));
+
+  /* --- Status (muted, gentle) --- */
+  --ok-500:#36B98A;
+  --warn-500:#D79A45;
+  --danger-500:#E0635B;
+
+  /* --- Radii --- */
+  --r-xs:6px; --r-sm:10px; --r-md:14px; --r-lg:20px; --r-xl:28px;
+  --r-pill:999px;
+
+  /* --- Spacing (4px base) --- */
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px;
+  --s-6:32px; --s-7:48px; --s-8:64px; --s-9:96px; --s-10:128px;
+
+  /* --- Blur / haze --- */
+  --blur-sm:8px; --blur-md:20px; --blur-lg:40px;
+
+  /* --- Type scale (fluid, tuned for desktop + wall displays) --- */
+  --t-display:clamp(48px,6vw,84px);
+  --t-h1:clamp(36px,4vw,56px);
+  --t-h2:clamp(27px,3vw,38px);
+  --t-h3:22px;
+  --t-body-lg:19px;
+  --t-body:16px;
+  --t-sm:14px;
+  --t-label:12px;
+
+  --lh-tight:1.04;
+  --lh-snug:1.2;
+  --lh-body:1.55;
+
+  --track-display:-0.01em;
+  --track-label:0.18em;
+  --ease:cubic-bezier(.22,.61,.36,1);   /* fluid, museum-calm */
+  --dur:.42s;
+}
+
+/* ============================================================
+   LIGHT THEME — pale haze / desert neutral
+   ============================================================ */
+:root,
+[data-theme="light"]{
+  color-scheme:light;
+
+  --bg:#ECEAE5;            /* hazy warm grey ground */
+  --bg-2:#F4F2EE;          /* raised ground */
+  --surface:rgba(255,255,255,.62);   /* glass */
+  --surface-2:rgba(255,255,255,.78);
+  --surface-solid:#FBFAF8;
+  --on-accent:#FFFFFF;
+
+  --fg:#16171B;            /* near-black, cool */
+  --fg-2:#56585F;          /* secondary */
+  --fg-3:#8A8C94;          /* tertiary / placeholder */
+
+  --line:rgba(22,23,27,.12);
+  --line-strong:rgba(22,23,27,.22);
+  --hairline:rgba(22,23,27,.07);
+
+  --accent:var(--blue-500);
+  --accent-2:var(--violet-500);
+
+  --tint:rgba(59,108,255,.06);        /* faint accent wash */
+  --glass-edge:rgba(255,255,255,.7);  /* top glass highlight */
+  --glass-fill:rgba(255,255,255,.55); /* defined glass panel base */
+
+  --shadow-sm:0 1px 2px rgba(20,22,30,.06),0 2px 6px rgba(20,22,30,.05);
+  --shadow-md:0 4px 14px rgba(20,22,30,.08),0 12px 34px rgba(20,22,30,.07);
+  --shadow-lg:0 18px 60px rgba(20,22,30,.14);
+  --glow:0 0 0 1px rgba(59,108,255,.35),0 8px 30px rgba(59,108,255,.25);
+}
+
+/* ============================================================
+   DARK THEME — deep cool near-black
+   ============================================================ */
+[data-theme="dark"]{
+  color-scheme:dark;
+
+  --bg:#08090C;
+  --bg-2:#0E1015;
+  --surface:rgba(255,255,255,.045);
+  --surface-2:rgba(255,255,255,.07);
+  --surface-solid:#14161C;
+  --on-accent:#FFFFFF;
+
+  --fg:#F2F3F6;
+  --fg-2:#A4A7B2;
+  --fg-3:#666A76;
+
+  --line:rgba(255,255,255,.11);
+  --line-strong:rgba(255,255,255,.2);
+  --hairline:rgba(255,255,255,.06);
+
+  --accent:var(--blue-400);
+  --accent-2:var(--violet-400);
+
+  --tint:rgba(110,140,255,.08);
+  --glass-edge:rgba(255,255,255,.12);
+  --glass-fill:rgba(24,26,34,.5);
+
+  --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+  --shadow-md:0 8px 30px rgba(0,0,0,.5);
+  --shadow-lg:0 24px 70px rgba(0,0,0,.6);
+  --glow:0 0 0 1px rgba(110,140,255,.5),0 8px 36px rgba(110,140,255,.35);
+}
+
+/* ============================================================
+   SEMANTIC ELEMENTS  (opt-in via .f26 scope)
+   ============================================================ */
+.f26{
+  font-family:var(--font-sans);
+  color:var(--fg);
+  font-size:var(--t-body);
+  line-height:var(--lh-body);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+.f26 h1,.f26 .h1{
+  font-family:var(--font-display); font-weight:700;
+  font-size:var(--t-h1); line-height:var(--lh-tight);
+  letter-spacing:var(--track-display); margin:0;
+}
+.f26 .display{
+  font-family:var(--font-display); font-weight:700;
+  font-size:var(--t-display); line-height:var(--lh-tight);
+  letter-spacing:var(--track-display); margin:0;
+}
+.f26 h2,.f26 .h2{
+  font-family:var(--font-display); font-weight:400;
+  font-size:var(--t-h2); line-height:var(--lh-snug);
+  letter-spacing:-0.005em; margin:0;
+}
+.f26 h3,.f26 .h3{
+  font-family:var(--font-sans); font-weight:700;
+  font-size:var(--t-h3); line-height:var(--lh-snug); margin:0;
+}
+.f26 p,.f26 .body{ margin:0; font-size:var(--t-body); line-height:var(--lh-body); color:var(--fg-2); }
+.f26 .lead{ font-size:var(--t-body-lg); line-height:1.5; color:var(--fg-2); }
+.f26 small,.f26 .small{ font-size:var(--t-sm); color:var(--fg-2); }
+
+/* Eyebrow / label — condensed, uppercase, tracked */
+.f26 .eyebrow,.f26 .label{
+  font-family:var(--font-data); font-weight:700;
+  font-size:var(--t-label); line-height:1; text-transform:uppercase;
+  letter-spacing:var(--track-label); color:var(--fg-3);
+}
+/* Data / metric readout — condensed tabular */
+.f26 .data{
+  font-family:var(--font-data); font-weight:400;
+  font-variant-numeric:tabular-nums; letter-spacing:.01em; color:var(--fg);
+}
+
+.f26 a{ color:var(--accent); text-decoration:none; }
+.f26 a:hover{ text-decoration:underline; text-underline-offset:3px; }
+
+.f26 .accent-text{
+  background:var(--accent-gradient);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}

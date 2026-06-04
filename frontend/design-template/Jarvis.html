@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jarvis — Ambient AI Assistant</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<link rel="stylesheet" href="jarvis.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="ui.jsx"></script>
+<script type="text/babel" src="data.jsx"></script>
+<script type="text/babel" src="responses.jsx"></script>
+<script type="text/babel" src="panels.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+const SRC_ICON = { screen: 'monitor', phone: 'smartphone', office: 'mic' };
+const VOICE_SAMPLES = [
+  'Show me the home network',
+  'What\'s on my calendar today?',
+  'Photos from the Porto trip',
+];
+
+function App() {
+  const [theme, setThemeState] = useState(() => localStorage.getItem('jarvis-theme') || 'dark');
+  const [mode, setMode] = useState('idle');            // idle | thinking | answer
+  const [resp, setResp] = useState(null);              // {type, query, focus}
+  const [query, setQuery] = useState('');
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [text, setText] = useState('');
+  const [now, setNow] = useState(new Date());
+  const [activeSource, setActiveSource] = useState('screen');
+  const [toast, setToast] = useState(null);
+  const idleTimer = useRef(null);
+  const firedAuto = useRef(false);
+
+  /* theme */
+  const setTheme = t => { setThemeState(t); localStorage.setItem('jarvis-theme', t); };
+  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
+
+  /* clock */
+  useEffect(() => { const id = setInterval(() => setNow(new Date()), 1000); return () => clearInterval(id); }, []);
+
+  /* ---- core: submit a query ---- */
+  const submit = useCallback((q, source = 'screen') => {
+    if (!q || !q.trim()) return;
+    setText(''); setListening(false); setPaletteOpen(false);
+    setActiveSource(source);
+    setQuery(q); setMode('thinking');
+    setTimeout(() => {
+      const r = window.routeIntent(q);
+      setResp(r); setMode('answer');
+    }, 1850);
+  }, []);
+
+  /* ---- open a morphing view (memory / history) in the canvas ---- */
+  const openView = useCallback((t) => {
+    setText(''); setListening(false); setPaletteOpen(false); setActiveSource('screen');
+    setQuery(t === 'memory' ? 'Memory' : 'History');
+    setResp({ type: t }); setMode('answer');
+  }, []);
+
+  /* ---- proactive event ---- */
+  const fireEvent = useCallback((id) => {
+    const ev = window.EVENTS.find(e => e.id === id); if (!ev) return;
+    setPaletteOpen(false);
+    setActiveSource('screen');
+    setToast(ev);
+    setTimeout(() => setToast(null), 5200);
+    // morph the canvas to the event's view
+    setQuery(ev.toast.lead); setMode('thinking');
+    setTimeout(() => {
+      if (ev.respond === 'door-motion') setResp({ type: 'devicemap', query: ev.toast.lead, focus: 'door' });
+      else if (ev.respond === 'deploy') setResp({ type: 'text', query: 'How\'s the prod-eu deploy looking?' });
+      else setResp({ type: 'calendar', query: ev.toast.lead });
+      setMode('answer');
+    }, 1500);
+  }, []);
+
+  /* ---- command palette dispatch ---- */
+  const runCmd = useCallback((cmd) => {
+    if (cmd.startsWith('__event:')) return fireEvent(cmd.slice(8));
+    if (cmd === '__panel:memory') return openView('memory');
+    if (cmd === '__panel:history') return openView('history');
+    if (cmd === '__idle') { setPaletteOpen(false); setMode('idle'); setResp(null); return; }
+    submit(cmd, 'screen');
+  }, [submit, fireEvent, openView]);
+
+  /* ---- voice ---- */
+  const toggleMic = () => {
+    if (listening) { setListening(false); return; }
+    setListening(true);
+    const sample = VOICE_SAMPLES[Math.floor(Math.random() * VOICE_SAMPLES.length)];
+    setTimeout(() => { setListening(prev => { if (prev) submit(sample, 'screen'); return false; }); }, 2600);
+  };
+
+  /* ---- keyboard: ⌘K ---- */
+  useEffect(() => {
+    const onKey = e => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setPaletteOpen(o => !o); }
+      else if (e.key === 'Escape') { setPaletteOpen(false); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  /* ---- self-trigger: one ambient event after sustained idle ---- */
+  useEffect(() => {
+    if (mode === 'idle' && !firedAuto.current && !paletteOpen) {
+      idleTimer.current = setTimeout(() => {
+        if (!firedAuto.current) { firedAuto.current = true; fireEvent('door'); }
+      }, 26000);
+    }
+    return () => clearTimeout(idleTimer.current);
+  }, [mode, paletteOpen, fireEvent]);
+
+  const goIdle = () => { setMode('idle'); setResp(null); };
+
+  /* ---- render the active canvas content ---- */
+  const renderCanvas = () => {
+    if (mode === 'idle') return <Idle now={now} onSuggest={q => submit(q, 'screen')} theme={theme} />;
+    if (mode === 'thinking') return <Thinking label={query} />;
+    if (mode === 'answer' && resp) {
+      if (resp.type === 'memory' || resp.type === 'history') {
+        const isMem = resp.type === 'memory';
+        return (
+          <>
+            <div className="viewhead">
+              <div className="vh-icon"><Icon name={isMem ? 'brain' : 'history'} size={26} /></div>
+              <div className="vh-t">
+                <span className="eyebrow">{isMem ? 'What I know · on-device' : 'One long conversation'}</span>
+                <h1>{isMem ? 'Memory' : 'History'}</h1>
+              </div>
+              <IconBtn icon="x" size={18} onClick={goIdle} title="Close" />
+            </div>
+            <div className="answerbody" key={resp.type}>
+              {isMem ? <MemoryView /> : <HistoryView onReplay={q => submit(q, 'screen')} />}
+            </div>
+          </>
+        );
+      }
+      let body = null;
+      if (resp.type === 'text') body = <TextAnswer query={resp.query} />;
+      else if (resp.type === 'gallery') body = <ImageGallery query={resp.query} />;
+      else if (resp.type === 'devicemap') body = <DeviceMap query={resp.query} focus={resp.focus} />;
+      else if (resp.type === 'calendar') body = <Calendar query={resp.query} now={now} />;
+      const typeLabel = { text: 'Answer', gallery: 'Gallery', devicemap: 'Network map', calendar: 'Schedule' }[resp.type];
+      return (
+        <>
+          <div className="qhead">
+            <div className="qavatar"><Icon name={SRC_ICON[activeSource]} size={19} /></div>
+            <div className="qbubble">
+              <div className="qmeta">
+                <span className="eyebrow">{activeSource === 'screen' ? 'You' : activeSource} · just now</span>
+                <Badge kind="acc">{typeLabel}</Badge>
+              </div>
+              <div className="qtext">{query}</div>
+            </div>
+            <IconBtn icon="rotate-ccw" size={18} onClick={goIdle} title="Back to idle" />
+          </div>
+          <div className="answerbody" key={resp.query + resp.type}>{body}</div>
+        </>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="app">
+      <div className="ground"><img className="wm" src="assets/mark-outline.svg" alt="" /></div>
+
+      {/* RAIL */}
+      <nav className="rail">
+        <button className="markbtn" onClick={goIdle} title="Jarvis"><img src="assets/mark.svg" alt="Jarvis" /></button>
+        <button className={`navbtn ${mode === 'idle' ? 'active' : ''}`} onClick={goIdle} title="Home"><Icon name="home" /></button>
+        <button className={`navbtn ${resp && resp.type === 'memory' && mode === 'answer' ? 'active' : ''}`} onClick={() => openView('memory')} title="Memory"><Icon name="brain" /></button>
+        <button className={`navbtn ${resp && resp.type === 'history' && mode === 'answer' ? 'active' : ''}`} onClick={() => openView('history')} title="History"><Icon name="history" /></button>
+        <div className="spacer" />
+        <button className="navbtn" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} title="Theme">
+          <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
+        </button>
+      </nav>
+
+      {/* MAIN */}
+      <div className="main">
+        <header className="topbar">
+          <div className="brand">
+            <span className="disp">Jarvis</span>
+            <div className="stat"><span className="eyebrow" style={{ fontSize: 10 }}>{mode === 'thinking' ? 'Working' : mode === 'answer' ? 'Active' : 'Listening · idle'}</span></div>
+          </div>
+          <div className="grow" />
+          <div className="sources">
+            {window.SOURCES.map(s => (
+              <div className={`src ${activeSource === s.id ? 'live' : ''}`} key={s.id}>
+                <Icon name={s.icon} size={14} />
+                {s.label}
+              </div>
+            ))}
+          </div>
+          <div className="search" onClick={() => setPaletteOpen(true)}>
+            <Icon name="search" size={17} /><span>Ask or command…</span><span className="kbd">⌘K</span>
+          </div>
+          <IconBtn icon={theme === 'dark' ? 'sun' : 'moon'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} title="Toggle theme" />
+        </header>
+
+        <div className="canvas-wrap">
+          <div className="canvas">{renderCanvas()}</div>
+        </div>
+
+        {/* INPUT DOCK */}
+        <div className="dock">
+          {toast && (
+            <div className="evt-toast">
+              <div className="ei"><Icon name={toast.icon} size={16} /></div>
+              <div className="etx"><b>{toast.toast.lead}</b> — {toast.toast.sub}</div>
+            </div>
+          )}
+          <div className={`dockbar ${listening ? 'listening' : ''}`}>
+            <img className="dmark" src="assets/mark.svg" alt="" />
+            {listening ? (
+              <div className="wave">
+                {Array.from({ length: 34 }).map((_, i) => (
+                  <i key={i} style={{ animationDelay: (i * 0.045) + 's', height: (8 + Math.abs(Math.sin(i * 0.9)) * 18) + 'px' }} />
+                ))}
+              </div>
+            ) : (
+              <input value={text} placeholder="Ask Jarvis anything — or say it out loud"
+                onChange={e => setText(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') submit(text, 'screen'); }} />
+            )}
+            <button className={`dockbtn mic ${listening ? 'on' : ''}`} onClick={toggleMic} title="Voice">
+              <Icon name={listening ? 'square' : 'mic'} size={20} />
+            </button>
+            <button className="dockbtn send" onClick={() => submit(text, 'screen')} title="Send">
+              <Icon name="arrow-up" size={20} />
+            </button>
+          </div>
+          <div className="dockhint">
+            <span className="hk"><kbd>⌘K</kbd> Commands</span>
+            <span className="hk"><Icon name="mic" size={13} /> Voice · this screen, phone &amp; office mic</span>
+            <span className="hk"><Icon name="zap" size={13} /> Schedules &amp; events can wake me</span>
+          </div>
+        </div>
+      </div>
+
+      {/* COMMAND PALETTE */}
+      {paletteOpen && <CommandPalette onClose={() => setPaletteOpen(false)} onRun={runCmd} setTheme={setTheme} theme={theme} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

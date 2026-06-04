@@ -1,0 +1,107 @@
+services:
+  nginx:
+    hostname: nginx
+    image: jarvis/nginx:${APP_ENV:-dev}-latest
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # QUIC
+    volumes:
+      # Shared certificates directory (environment-specific paths managed by nginx.conf)
+      - letsencrypt:/etc/letsencrypt:rw
+      - nginx-logs:/var/log/nginx:rw
+    networks:
+      - jarvis-internal
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  certbot:
+    image: certbot/dns-cloudflare:latest
+    volumes:
+      # Shared certificates directory (environment-specific paths managed by nginx.conf)
+      - letsencrypt:/etc/letsencrypt/:rw
+  
+  database:
+    hostname: database
+    image: kgrozdanovski/pgvector:17-alpine
+    restart: always
+    env_file:
+      - "./.env" # get the environment variables from a file
+    volumes:
+      - database-data:/var/lib/postgresql/data:rw # persist data even if container shuts down
+    ports:
+      - target: 5432
+        published: 5432
+        host_ip: 127.0.0.1
+        protocol: tcp
+    networks:
+      - jarvis-internal
+    logging:
+      options:
+        max-size: "10m"
+
+  backend:
+    hostname: backend
+    image: jarvis/backend:${APP_ENV:-dev}-latest
+    restart: always
+    env_file:
+      - "./.env"
+    environment:
+      - "APP_ENV=${APP_ENV:-dev}"
+      - DOCKER=true
+    volumes:
+      - backend-storage:/code/storage:rw
+      - goaccess-reports:/code/goaccess:ro
+      - nginx-logs:/var/log/nginx:ro
+    networks:
+      - jarvis-internal
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  goaccess:
+    image: allinurl/goaccess:latest
+    restart: always
+    depends_on:
+      - nginx
+    volumes:
+      - nginx-logs:/var/log/nginx:ro
+      - goaccess-reports:/srv/report:rw
+    command: >-
+      goaccess /var/log/nginx/customer-support-com.access.log
+      --log-format='%h - %^ [%d:%t %^] "%r" %s %b "%R" "%u" "%^"'
+      --date-format=%d/%b/%Y
+      --time-format=%H:%M:%S
+      --real-time-html
+      --output=/srv/report/index.html
+      --no-global-config
+      --persist
+      --restore
+      --db-path=/srv/report/db
+    networks:
+      - jarvis-internal
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+networks:
+  jarvis-internal:
+    driver: bridge
+
+volumes:
+  letsencrypt:
+    driver: local
+  # Postgres Persistence
+  database-data:
+    driver: local
+  backend-storage:
+    driver: local
+  nginx-logs:
+    driver: local
+  goaccess-reports:
+    driver: local

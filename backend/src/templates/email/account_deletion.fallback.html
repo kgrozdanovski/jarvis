@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirm account deletion</title>
+</head>
+<body style="margin:0;padding:0;background:#fafafa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <div style="padding:24px 12px;max-width:640px;margin:0 auto;color:#171717;">
+    {% set template_id = 'deletion' %}
+    {% include "_header.fallback.html" %}
+
+    <div style="background:#ffffff;border:1px solid #E5E5E5;border-radius:16px;padding:36px 28px;margin-top:8px;">
+      <h1 style="margin:0 0 12px 0;color:#171717;font-size:24px;font-weight:700;line-height:1.2;">Confirm account deletion</h1>
+      <p style="margin:0 0 12px 0;color:#404040;font-size:15px;line-height:1.6;">Hi {{ user_name or 'there' }},</p>
+      <p style="margin:0 0 22px 0;color:#404040;font-size:15px;line-height:1.6;">
+        We received a request to permanently delete your Jarvis account. This link is valid for {{ expiry_hours }} hour(s).
+      </p>
+      <p style="margin:0 0 22px 0;">
+        <a href="{{ cta_url }}" style="display:inline-block;padding:14px 28px;border-radius:9999px;background:linear-gradient(135deg,#732E28,#D9574B);background-color:#D9574B;color:#fff;font-weight:600;font-size:15px;text-decoration:none;">{{ cta_label }} &nbsp;</a>
+      </p>
+      <div style="border-top:1px solid #E5E5E5;margin:6px 0 18px 0;"></div>
+      <p style="margin:0 0 8px 0;color:#737373;font-size:13px;line-height:1.6;">
+        If you didn't request this, you can ignore this email. Your account will remain active until you confirm.
+      </p>
+      <p style="margin:0;color:#737373;font-size:13px;line-height:1.6;">
+        Need help? <a href="{{ support_url }}" style="color:#732E28;text-decoration:underline;">Contact support</a>.
+      </p>
+    </div>
+
+    {% include "_footer.fallback.html" %}
+  </div>
+</body>
+</html>

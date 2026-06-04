@@ -1,0 +1,7 @@
+<mj-section padding="28px 0 12px 0" background-color="#fafafa">
+  <mj-column width="100%">
+    <mj-text align="center" color="#171717" font-size="14px" font-weight="700" letter-spacing="0.22em" padding="0">
+      JARVIS
+    </mj-text>
+  </mj-column>
+</mj-section>

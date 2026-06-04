@@ -1,0 +1,5 @@
+# Ignore everything
+**
+
+# except the the .output/public directory
+!.output/public
