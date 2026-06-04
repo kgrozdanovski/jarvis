@@ -1,6 +1,3 @@
-const withOpacity = (variable: string) => ({ opacityValue }: { opacityValue?: number }) =>
-  `rgb(var(${variable}) / ${opacityValue === undefined ? 1 : opacityValue})`
-
 const siteName = 'Jarvis'
 
 const truthyFlags = new Set(['1', 'true', 'yes', 'on'])
@@ -59,8 +56,8 @@ const contentSecurityPolicy = [
   "frame-ancestors 'self'",
   "form-action 'self'",
   "img-src 'self' data: blob: https:",
-  "font-src 'self' data: https://fonts.gstatic.com https://fonts.cdnfonts.com",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
+  "font-src 'self' data:",
+  "style-src 'self' 'unsafe-inline' https://accounts.google.com",
   "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://accounts.google.com https://accounts.google.com/gsi/client https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://scripts.clarity.ms",
   "connect-src 'self' https://accounts.google.com https://accounts.google.com/gsi/ http://localhost:8080 http://127.0.0.1:8080 ws://localhost:8080 ws://127.0.0.1:8080 ws://localhost:4000 https://o4511122784780289.ingest.de.sentry.io https://www.google-analytics.com https://region1.google-analytics.com https://www.clarity.ms",
   "frame-src 'self' https://accounts.google.com https://accounts.google.com/gsi/",
@@ -84,7 +81,6 @@ export default defineNuxtConfig({
   routeRules: {
     ...privateRouteRules,
     '/_nuxt/**': { headers: longCacheHeaders },
-    '/_ipx/**': { headers: longCacheHeaders },
     '/images/**': { headers: longCacheHeaders },
     '/**': {
       headers: {
@@ -119,35 +115,27 @@ export default defineNuxtConfig({
       meta: [
         { name: 'application-name', content: siteName },
         { name: 'author', content: siteName },
-        { name: 'theme-color', content: '#732E28' },
+        { name: 'theme-color', content: '#3B6CFF' },
         {
           name: 'robots',
           content:
             'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'
         }
       ],
-      link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.cdnfonts.com' }
-      ]
+      link: []
     },
 
     pageTransition: { name: 'page', mode: 'out-in' }
   },
 
   modules: [
-    '@nuxt/image',
-    '@nuxt/content',
-    '@nuxtjs/color-mode',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
-    'nuxt-lucide-icons',
     '@sentry/nuxt/module',
     '@nuxtjs/sitemap',
   ],
 
   sitemap: {
-    sources: ['/api/__sitemap__/urls'],
     exclude: [
       ...privateRoutes,
       '/login',
@@ -155,8 +143,6 @@ export default defineNuxtConfig({
       '/verify-email',
     ],
   },
-
-  io: {},
 
   components: [
     {
@@ -178,8 +164,7 @@ export default defineNuxtConfig({
   },
 
   css: [
-    '~/assets/style/main.css',
-    '~/assets/style/variables.scss'
+    '~/assets/style/main.css'
   ],
 
   postcss: {
@@ -187,10 +172,6 @@ export default defineNuxtConfig({
       tailwindcss: {},
       autoprefixer: {}
     }
-  },
-
-  headlessui: {
-    prefix: 'Headless'
   },
 
   runtimeConfig: {

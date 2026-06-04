@@ -18,7 +18,7 @@
           <div class="flex flex-col sm:flex-row gap-2 mt-6">
             <button
               type="button"
-              class="flex-1 rounded-full luxury-red-gradient text-white py-2.5 text-sm font-medium shadow-lg shadow-jarvisred-500/40 hover:opacity-95 transition"
+              class="flex-1 rounded-full jarvis-accent-gradient text-white py-2.5 text-sm font-medium shadow-lg shadow-jarvisblue-500/30 hover:opacity-95 transition"
               @click="handleLogin"
             >
               Log in

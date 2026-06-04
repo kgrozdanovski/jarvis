@@ -10,8 +10,8 @@ COPY ./frontend/.output/public /var/www/html/frontend/.output/public
 USER root
 
 # Create necessary configuration and certificate directories
-RUN mkdir -p /etc/letsencrypt/live/stage.getpoliro.com
-RUN mkdir -p /etc/letsencrypt/live/api.stage.getpoliro.com
+RUN mkdir -p /etc/letsencrypt/live/stage.jarvis.local
+RUN mkdir -p /etc/letsencrypt/live/api.stage.jarvis.local
 
 RUN chown -R nginx:nginx /var/www/html
 RUN chmod -R 755 /var/www/html

@@ -19,7 +19,7 @@ from src.core.logger import get_logger
 
 logger = get_logger("service:traffic-log-ingestion")
 
-ACCESS_LOG_PATH = os.getenv("NGINX_ACCESS_LOG_PATH", "/var/log/nginx/customer-support-com.access.log")
+ACCESS_LOG_PATH = os.getenv("NGINX_ACCESS_LOG_PATH", "/var/log/nginx/jarvis.access.log")
 OFFSET_FILE_PATH = os.getenv("TRAFFIC_LOG_OFFSET_PATH", "/code/storage/traffic_log_offset.txt")
 POLL_INTERVAL_SECONDS = 5
 BATCH_SIZE = 100

@@ -29,22 +29,9 @@ useHead({
 <style lang="scss">
 body {
     background-color: #F6F6F6;
-    font-family: 'Nimbus Sans L', sans-serif;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-.luxury-red-gradient {
-  background: linear-gradient(to right, #732E28, #D9574B);
-  box-shadow: 0 2px 16px #D9574B;
-}
-.luxury-red-gradient:hover {
-  transition: all 0.2s ease-in-out;
-}
-.luxury-red-gradient-text {
-  background: linear-gradient(to right, #732E28, #D9574B);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 /*

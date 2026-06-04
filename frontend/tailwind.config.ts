@@ -14,34 +14,30 @@ export default {
     './plugins/**/*.{js,ts}',
     './app.vue',
     './error.vue',
-    './content/**/*.{md,mdx,vue}',
   ],
   theme: {
     extend: {
       colors: {
-        jarvisred: {
-          50: withOpacity('--jarvisred-50'),
-          100: withOpacity('--jarvisred-100'),
-          200: withOpacity('--jarvisred-200'),
-          300: withOpacity('--jarvisred-300'),
-          400: withOpacity('--jarvisred-400'),
-          500: withOpacity('--jarvisred-500'),
-          600: withOpacity('--jarvisred-600'),
-          700: withOpacity('--jarvisred-700'),
-          800: withOpacity('--jarvisred-800'),
-          900: withOpacity('--jarvisred-900'),
-          950: withOpacity('--jarvisred-950'),
+        jarvisblue: {
+          400: withOpacity('--jarvisblue-400'),
+          500: withOpacity('--jarvisblue-500'),
+          600: withOpacity('--jarvisblue-600'),
+        },
+        jarvisviolet: {
+          400: withOpacity('--jarvisviolet-400'),
+          500: withOpacity('--jarvisviolet-500'),
+          600: withOpacity('--jarvisviolet-600'),
         },
       },
-      // This enables accent-jarvisred-*** utilities
+      // This enables accent-jarvisblue-*** utilities
       accentColor: ({ theme }) => ({
         ...theme('colors'),
-        jarvisred: theme('colors.jarvisred'),
+        jarvisblue: theme('colors.jarvisblue'),
       }),
-      // This enables ring-jarvisred-*** utilities
+      // This enables ring-jarvisblue-*** utilities
      ringColor: ({ theme }) => ({
         ...theme('colors'),
-        jarvisred: theme('colors.jarvisred'),
+        jarvisblue: theme('colors.jarvisblue'),
       }),
     },
   },
