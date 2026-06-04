@@ -1,3 +1,5 @@
+![Project Banner](assets/github-banner.png)
+
 # Jarvis
 
 Jarvis is a local-network home AI assistant monorepo.
