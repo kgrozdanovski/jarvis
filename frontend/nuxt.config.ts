@@ -30,14 +30,15 @@ const clarityProjectId =
 const uploadSentrySourceMaps = truthyFlags.has(
   (process.env.SENTRY_UPLOAD_SOURCEMAPS ?? '').toLowerCase()
 )
+const assistantApiEnabled = truthyFlags.has(
+  (process.env.NUXT_PUBLIC_ASSISTANT_API_ENABLED ?? '').toLowerCase()
+)
 
 // Areas that should stay SPA-only (no SSR)
 const privateRoutes = [
   '/welcome',
   '/account',
-  '/account/**',
-  '/admin',
-  '/admin/**'
+  '/account/**'
 ]
 
 const privateRouteRules = Object.fromEntries(
@@ -164,7 +165,8 @@ export default defineNuxtConfig({
   },
 
   css: [
-    '~/assets/style/main.css'
+    '~/assets/style/main.css',
+    '~/assets/style/assistant.css'
   ],
 
   postcss: {
@@ -179,6 +181,7 @@ export default defineNuxtConfig({
       apiBase,
       socketBase,
       debugMode: parsedDebug,
+      assistantApiEnabled,
       googleClientId,
       googleTagId,
       GOOGLE_OAUTH_CLIENT_ID: process.env.GOOGLE_OAUTH_CLIENT_ID ?? '',

@@ -29,6 +29,9 @@ part of the project itself. It must also not be altered in any way.
 - Avoid adding new packages unless explicitly requested.
 - Respect SSR vs SPA route rules:
   - “Private” routes are intentionally SPA-only via `routeRules` in `frontend/nuxt.config.ts`.
+- Do not allow files to become massive. If they get very big (close to 1000 LOC) or if there is a clean, logical and
+project-conventional way to split the logic into components, composables or move things to other parts of the code then
+do it.
 
 ## Avoid touching
 
